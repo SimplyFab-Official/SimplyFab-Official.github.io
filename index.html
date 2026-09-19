@@ -107,26 +107,17 @@
         </div>
       </div>
 
-      <!-- Customer Personalization & Quick Actions -->
+      <!-- Quick Actions -->
       <div class="flex items-center gap-3">
         <!-- Audio Chime Toggle -->
         <button onclick="toggleAudio()" id="audio-toggle-btn" class="p-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-amber-400 transition" title="Toggle Sound Effects">
           <i data-lucide="volume-2" class="w-4 h-4" id="audio-icon"></i>
         </button>
 
-        <!-- Customer Identity Badge -->
-        <div id="customer-profile-badge" class="hidden sm:flex items-center gap-2 bg-slate-800/80 border border-slate-700/80 rounded-full py-1.5 px-3.5 text-xs text-slate-200 shadow-inner">
-          <i data-lucide="user-check" class="w-4 h-4 text-roseGold-400"></i>
-          <span id="header-user-name" class="font-medium text-amber-200">Valued Guest</span>
-          <button onclick="openCustomerModal()" class="ml-1 text-slate-400 hover:text-white transition" title="Edit Profile">
-            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-          </button>
-        </div>
-
-        <!-- Appointment Shortcut -->
-        <a href="#catalog-section" class="hidden md:inline-flex items-center gap-2 bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase shadow-md shadow-roseGold-900/40 transition hover:scale-105">
+        <!-- Book Fitting Tab Button -->
+        <button onclick="openGeneralFittingModal()" class="inline-flex items-center gap-2 bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white px-4 py-2 rounded-full text-xs font-semibold tracking-wider uppercase shadow-md shadow-roseGold-900/40 transition hover:scale-105">
           <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Book Fitting
-        </a>
+        </button>
 
         <!-- Admin Indicator / Launcher Button -->
         <button onclick="triggerAdminAccessDirect()" class="relative p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-amber-600/40 text-amber-400 transition" title="Staff Portal Access">
@@ -152,15 +143,8 @@
       </h2>
       
       <p class="mt-4 text-slate-300 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-        Browse our exclusive luxury evening gowns, bridal wear, and cocktail dresses. Reserve your personalized 30-minute fitting session with ease.
+        Browse our exclusive luxury evening gowns, bridal wear, and cocktail dresses. Select your favorite styles and reserve a 30-minute fitting session with our stylists.
       </p>
-
-      <!-- Customer Status Bar Mobile -->
-      <div class="mt-6 inline-flex sm:hidden items-center gap-2 bg-slate-800/90 border border-slate-700 rounded-full px-4 py-2 text-xs text-slate-300">
-        <i data-lucide="user" class="w-3.5 h-3.5 text-roseGold-400"></i>
-        <span id="mobile-user-name">Guest</span>
-        <button onclick="openCustomerModal()" class="text-amber-400 font-semibold underline ml-1">Change</button>
-      </div>
 
     </div>
   </section>
@@ -244,43 +228,7 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- 1. CUSTOMER ONBOARDING MODAL -->
-  <div id="customer-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-    <div class="glass-panel max-w-md w-full p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-2xl relative animate-fadeIn">
-      
-      <div class="text-center mb-6">
-        <div class="w-12 h-12 rounded-full bg-roseGold-900/50 border border-roseGold-500/40 flex items-center justify-center mx-auto mb-3">
-          <i data-lucide="sparkles" class="w-6 h-6 text-amber-400"></i>
-        </div>
-        <h3 class="font-cinzel text-xl font-bold text-white">Welcome to Simply Fab 2.0</h3>
-        <p class="text-xs text-slate-300 mt-1">Please enter your details for a personalized fitting experience.</p>
-      </div>
-
-      <form onsubmit="handleCustomerSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name *</label>
-          <input type="text" id="cust-input-name" required placeholder="e.g. Maria Santos" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Contact Phone Number *</label>
-          <input type="tel" id="cust-input-phone" required placeholder="e.g. 09171234567" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Location / City *</label>
-          <input type="text" id="cust-input-location" required placeholder="e.g. Quezon City" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
-        </div>
-
-        <button type="submit" class="w-full bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white font-semibold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-roseGold-900/40">
-          Enter Boutique
-        </button>
-      </form>
-
-    </div>
-  </div>
-
-  <!-- 2. GOWN DETAILS & FITTING MODAL -->
+  <!-- 1. GOWN DETAILS MODAL -->
   <div id="gown-details-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto custom-scrollbar">
     <div class="glass-panel max-w-3xl w-full my-auto rounded-3xl border border-slate-700 shadow-2xl relative overflow-hidden">
       
@@ -310,7 +258,7 @@
           </div>
         </div>
 
-        <!-- Details & Fitting Appointment Booking Form -->
+        <!-- Details -->
         <div class="p-6 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
@@ -319,7 +267,6 @@
             </div>
 
             <h3 id="modal-gown-name" class="font-cinzel text-xl font-bold text-white">Gown Name</h3>
-            <p id="modal-gown-price" class="text-amber-400 font-semibold text-lg mt-1">₱0.00 / Rental</p>
 
             <p id="modal-gown-desc" class="text-xs text-slate-300 mt-3 leading-relaxed">Gown description will appear here...</p>
 
@@ -328,37 +275,79 @@
               <div><span class="text-slate-400">Color:</span> <strong id="modal-gown-color" class="text-slate-200">Rose Gold</strong></div>
             </div>
 
-            <hr class="border-slate-800 my-5">
-
-            <!-- Fitting Appointment Scheduling Form -->
-            <h4 class="font-cinzel text-sm font-bold text-amber-300 mb-2 flex items-center gap-1.5">
-              <i data-lucide="clock" class="w-4 h-4"></i> Schedule Fitting Session (30 Mins)
-            </h4>
-
-            <div class="space-y-3">
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Select Fitting Date</label>
-                <input type="date" id="fitting-date-input" onchange="generateTimeSlots()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-              </div>
-
-              <div>
-                <label class="block text-[11px] text-slate-400 mb-1">Available 30-Minute Slots</label>
-                <select id="fitting-time-slot" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-                  <option value="">Select a Date First...</option>
-                </select>
-              </div>
-            </div>
+            <p class="text-[11px] text-amber-300/80 italic mt-4 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
+              ✨ Rental pricing, fitting details, and customization options are discussed directly during your fitting appointment.
+            </p>
           </div>
 
           <div class="mt-6">
-            <button id="book-fitting-btn" onclick="submitFittingAppointment()" class="w-full bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white font-semibold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-roseGold-900/40">
-              Confirm Fitting Appointment
+            <button onclick="bookFittingForCurrentGown()" class="w-full bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white font-semibold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-roseGold-900/40 flex items-center justify-center gap-2">
+              <i data-lucide="calendar" class="w-4 h-4"></i> Book Fitting For This Gown
             </button>
           </div>
 
         </div>
 
       </div>
+
+    </div>
+  </div>
+
+  <!-- 2. APPOINTMENT BOOKING MODAL -->
+  <div id="booking-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden overflow-y-auto custom-scrollbar">
+    <div class="glass-panel max-w-md w-full my-auto p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-2xl relative">
+      
+      <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-full bg-roseGold-900/50 border border-roseGold-500/40 flex items-center justify-center mx-auto mb-3">
+          <i data-lucide="calendar" class="w-6 h-6 text-amber-400"></i>
+        </div>
+        <h3 class="font-cinzel text-xl font-bold text-white">Book Fitting Appointment</h3>
+        <p class="text-xs text-slate-300 mt-1">Please fill in your contact information and select a 30-minute fitting slot.</p>
+      </div>
+
+      <form onsubmit="handleFittingSubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name *</label>
+          <input type="text" id="book-input-name" required placeholder="e.g. Maria Santos" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Contact Phone Number *</label>
+          <input type="tel" id="book-input-phone" required placeholder="e.g. 09171234567" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Location / City *</label>
+          <input type="text" id="book-input-location" required placeholder="e.g. Quezon City" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Gown Requested</label>
+          <input type="text" id="book-input-gown" readonly placeholder="General Fitting / Browse All" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-amber-300 font-semibold focus:outline-none cursor-not-allowed">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Fitting Date *</label>
+            <input type="date" id="book-date-input" required onchange="generateBookingTimeSlots()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">30-Min Time Slot *</label>
+            <select id="book-time-slot" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="">Select Date First...</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-gradient-to-r from-roseGold-700 to-amber-600 hover:from-roseGold-600 hover:to-amber-500 text-white font-semibold py-3 rounded-xl text-xs uppercase tracking-wider transition shadow-lg shadow-roseGold-900/40">
+          Confirm Appointment
+        </button>
+      </form>
 
     </div>
   </div>
@@ -491,11 +480,6 @@
               </div>
 
               <div>
-                <label class="block text-slate-400 mb-1">Rental Price (₱) *</label>
-                <input type="number" id="gown-input-price" required placeholder="3500" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
-              </div>
-
-              <div>
                 <label class="block text-slate-400 mb-1">Size *</label>
                 <select id="gown-input-size" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
                   <option value="XS">XS</option>
@@ -551,7 +535,6 @@
                   <th class="p-3.5">Gown</th>
                   <th class="p-3.5">Category</th>
                   <th class="p-3.5">Size/Color</th>
-                  <th class="p-3.5">Price</th>
                   <th class="p-3.5">Status</th>
                   <th class="p-3.5 text-right">Actions</th>
                 </tr>
@@ -572,8 +555,8 @@
                 <tr>
                   <th class="p-3.5">Customer Name</th>
                   <th class="p-3.5">Contact / Location</th>
-                  <th class="p-3.5">Visited Date</th>
-                  <th class="p-3.5">Item Rented</th>
+                  <th class="p-3.5">Fitting Date</th>
+                  <th class="p-3.5">Item Rented / Interested</th>
                   <th class="p-3.5">Return Due Date</th>
                   <th class="p-3.5">Rental Status</th>
                   <th class="p-3.5 text-right">Update Status</th>
@@ -597,14 +580,12 @@
     const STORAGE_KEY_GOWNS = 'simplyfab_gowns_v2';
     const STORAGE_KEY_FITTINGS = 'simplyfab_fittings_v2';
     const STORAGE_KEY_LOGS = 'simplyfab_logs_v2';
-    const STORAGE_KEY_USER = 'simplyfab_user_v2';
     const ADMIN_PASS = '021910';
 
     // App Global State Variables
     let gowns = [];
     let fittings = [];
     let logs = [];
-    let currentUser = null;
     let selectedGown = null;
     let currentImageIndex = 0;
     let activeUploadedImages = [];
@@ -626,17 +607,17 @@
 
         if (type === 'vip') {
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(523.25, now); // C5
-          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
-          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3); // G5
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3);
           gain.gain.setValueAtTime(0.15, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
           osc.start(now);
           osc.stop(now + 0.6);
         } else if (type === 'success') {
           osc.type = 'triangle';
-          osc.frequency.setValueAtTime(587.33, now); // D5
-          osc.frequency.exponentialRampToValueAtTime(880, now + 0.2); // A5
+          osc.frequency.setValueAtTime(587.33, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
           gain.gain.setValueAtTime(0.12, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
           osc.start(now);
@@ -665,7 +646,6 @@
         id: 'g-101',
         title: 'Aurora Rose Gold Sequined Gown',
         category: 'Ballgown',
-        price: 4500,
         size: 'M',
         color: 'Rose Gold',
         status: 'Available',
@@ -679,7 +659,6 @@
         id: 'g-102',
         title: 'Celestial Midnight Sapphire Gown',
         category: 'Evening Wear',
-        price: 3800,
         size: 'S',
         color: 'Navy Blue',
         status: 'Available',
@@ -693,7 +672,6 @@
         id: 'g-103',
         title: 'Elysian Lace Bridal Couture',
         category: 'Bridal',
-        price: 8500,
         size: 'XS',
         color: 'Ivory Cream',
         status: 'Available',
@@ -707,7 +685,6 @@
         id: 'g-104',
         title: 'Modern Mestiza Butterfly Filipiniana',
         category: 'Filipiniana',
-        price: 4200,
         size: 'L',
         color: 'Gold / Champagne',
         status: 'Available',
@@ -721,7 +698,6 @@
     // Initialization Logic
     window.addEventListener('DOMContentLoaded', () => {
       loadData();
-      checkCustomerRegistration();
       renderCatalog();
       setupKeypadShortcuts();
       lucide.createIcons();
@@ -731,73 +707,9 @@
       gowns = JSON.parse(localStorage.getItem(STORAGE_KEY_GOWNS)) || defaultGowns;
       fittings = JSON.parse(localStorage.getItem(STORAGE_KEY_FITTINGS)) || [];
       logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
-      currentUser = JSON.parse(localStorage.getItem(STORAGE_KEY_USER)) || null;
 
       if (!localStorage.getItem(STORAGE_KEY_GOWNS)) {
         localStorage.setItem(STORAGE_KEY_GOWNS, JSON.stringify(defaultGowns));
-      }
-    }
-
-    // Customer Onboarding Setup
-    function checkCustomerRegistration() {
-      if (!currentUser) {
-        document.getElementById('customer-modal').classList.remove('hidden');
-      } else {
-        updateHeaderUserBadge();
-        logCustomerVisit();
-      }
-    }
-
-    function handleCustomerSubmit(e) {
-      e.preventDefault();
-      const name = document.getElementById('cust-input-name').value.trim();
-      const phone = document.getElementById('cust-input-phone').value.trim();
-      const location = document.getElementById('cust-input-location').value.trim();
-
-      if (!name || !phone || !location) return;
-
-      currentUser = { name, phone, location, firstVisit: new Date().toISOString() };
-      localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(currentUser));
-
-      document.getElementById('customer-modal').classList.add('hidden');
-      updateHeaderUserBadge();
-      logCustomerVisit();
-      playChime('vip');
-    }
-
-    function openCustomerModal() {
-      if (currentUser) {
-        document.getElementById('cust-input-name').value = currentUser.name || '';
-        document.getElementById('cust-input-phone').value = currentUser.phone || '';
-        document.getElementById('cust-input-location').value = currentUser.location || '';
-      }
-      document.getElementById('customer-modal').classList.remove('hidden');
-    }
-
-    function updateHeaderUserBadge() {
-      if (!currentUser) return;
-      document.getElementById('header-user-name').innerText = currentUser.name;
-      document.getElementById('mobile-user-name').innerText = currentUser.name;
-      document.getElementById('customer-profile-badge').classList.remove('hidden');
-    }
-
-    function logCustomerVisit() {
-      if (!currentUser) return;
-      const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      
-      const existingLog = logs.find(l => l.phone === currentUser.phone && l.visitedDate === todayStr);
-      if (!existingLog) {
-        logs.unshift({
-          id: 'log-' + Date.now(),
-          name: currentUser.name,
-          phone: currentUser.phone,
-          location: currentUser.location,
-          visitedDate: todayStr,
-          itemRented: 'Browsing Collection',
-          returnDate: 'N/A',
-          status: 'Visiting'
-        });
-        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
       }
     }
 
@@ -846,7 +758,6 @@
               <h3 class="font-cinzel text-base font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">${gown.title}</h3>
               
               <div class="flex items-center justify-between gap-2 mt-2 text-xs">
-                <span class="text-amber-400 font-bold text-sm">₱${Number(gown.price).toLocaleString()}</span>
                 <span class="text-slate-400">Size: <strong class="text-slate-200">${gown.size}</strong> • ${gown.color}</span>
               </div>
 
@@ -888,18 +799,9 @@
       document.getElementById('modal-gown-name').innerText = selectedGown.title;
       document.getElementById('modal-gown-category').innerText = selectedGown.category;
       document.getElementById('modal-gown-status').innerText = selectedGown.status;
-      document.getElementById('modal-gown-price').innerText = `₱${Number(selectedGown.price).toLocaleString()} / Rental`;
       document.getElementById('modal-gown-desc').innerText = selectedGown.desc;
       document.getElementById('modal-gown-size').innerText = selectedGown.size;
       document.getElementById('modal-gown-color').innerText = selectedGown.color;
-
-      // Set Date Input Minimum to Today
-      const today = new Date().toISOString().split('T')[0];
-      const dateInput = document.getElementById('fitting-date-input');
-      dateInput.min = today;
-      dateInput.value = today;
-
-      generateTimeSlots();
 
       document.getElementById('gown-details-modal').classList.remove('hidden');
       playChime('soft');
@@ -941,18 +843,44 @@
       document.getElementById('gown-details-modal').classList.add('hidden');
     }
 
-    // 30-Minute Time Slot Scheduler
-    function generateTimeSlots() {
-      const slotSelect = document.getElementById('fitting-time-slot');
-      const dateVal = document.getElementById('fitting-date-input').value;
+    // Appointment Booking Modal Handlers
+    function openGeneralFittingModal() {
+      document.getElementById('book-input-gown').value = 'General Fitting / Browse Collection';
+      setupBookingModalDates();
+      document.getElementById('booking-modal').classList.remove('hidden');
+    }
+
+    function bookFittingForCurrentGown() {
+      closeGownDetailsModal();
+      if (selectedGown) {
+        document.getElementById('book-input-gown').value = selectedGown.title;
+      }
+      setupBookingModalDates();
+      document.getElementById('booking-modal').classList.remove('hidden');
+    }
+
+    function closeBookingModal() {
+      document.getElementById('booking-modal').classList.add('hidden');
+    }
+
+    function setupBookingModalDates() {
+      const today = new Date().toISOString().split('T')[0];
+      const dateInput = document.getElementById('book-date-input');
+      dateInput.min = today;
+      dateInput.value = today;
+      generateBookingTimeSlots();
+    }
+
+    function generateBookingTimeSlots() {
+      const slotSelect = document.getElementById('book-time-slot');
+      const dateVal = document.getElementById('book-date-input').value;
       slotSelect.innerHTML = '';
 
       if (!dateVal) {
-        slotSelect.innerHTML = '<option value="">Select a Date First...</option>';
+        slotSelect.innerHTML = '<option value="">Select Date First...</option>';
         return;
       }
 
-      // Generate 30-minute intervals from 10:00 AM to 7:00 PM
       const startHour = 10;
       const endHour = 19;
       let slots = [];
@@ -985,27 +913,27 @@
       return `${h}:${m} ${ampm}`;
     }
 
-    function submitFittingAppointment() {
-      if (!currentUser) {
-        openCustomerModal();
-        return;
-      }
+    function handleFittingSubmit(e) {
+      e.preventDefault();
 
-      const dateVal = document.getElementById('fitting-date-input').value;
-      const slotVal = document.getElementById('fitting-time-slot').value;
+      const name = document.getElementById('book-input-name').value.trim();
+      const phone = document.getElementById('book-input-phone').value.trim();
+      const location = document.getElementById('book-input-location').value.trim();
+      const gownRequested = document.getElementById('book-input-gown').value;
+      const dateVal = document.getElementById('book-date-input').value;
+      const slotVal = document.getElementById('book-time-slot').value;
 
-      if (!dateVal || !slotVal) {
-        alert('Please select both a fitting date and 30-minute time slot.');
+      if (!name || !phone || !location || !dateVal || !slotVal) {
+        alert('Please complete all required fields.');
         return;
       }
 
       const newFitting = {
         id: 'fit-' + Date.now(),
-        customerName: currentUser.name,
-        customerPhone: currentUser.phone,
-        customerLocation: currentUser.location,
-        gownId: selectedGown.id,
-        gownTitle: selectedGown.title,
+        customerName: name,
+        customerPhone: phone,
+        customerLocation: location,
+        gownTitle: gownRequested,
         date: dateVal,
         slot: slotVal,
         status: 'Scheduled',
@@ -1015,22 +943,22 @@
       fittings.unshift(newFitting);
       localStorage.setItem(STORAGE_KEY_FITTINGS, JSON.stringify(fittings));
 
-      // Also log activity
+      // Customer Activity Log
       logs.unshift({
         id: 'log-' + Date.now(),
-        name: currentUser.name,
-        phone: currentUser.phone,
-        location: currentUser.location,
-        visitedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        itemRented: `${selectedGown.title} (Fitting: ${dateVal})`,
+        name,
+        phone,
+        location,
+        visitedDate: dateVal,
+        itemRented: `${gownRequested}`,
         returnDate: 'Pending Fitting',
-        status: 'Fitting Reserved'
+        status: 'Fitting Scheduled'
       });
       localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
 
       playChime('success');
-      alert(`✨ Fitting Appointment Confirmed!\n\nDate: ${dateVal}\nTime Slot: ${slotVal}\nGown: ${selectedGown.title}\n\nWe look forward to welcoming you at Simply Fab 2.0!`);
-      closeGownDetailsModal();
+      alert(`✨ Fitting Appointment Confirmed!\n\nName: ${name}\nDate: ${dateVal}\nTime Slot: ${slotVal}\nRequested Item: ${gownRequested}\n\nWe look forward to welcoming you at Simply Fab 2.0!`);
+      closeBookingModal();
     }
 
     // Secret Admin Triggers (Shortcut: Ctrl+Shift+A / Mobile 5 Taps)
@@ -1050,7 +978,6 @@
 
     function setupKeypadShortcuts() {
       window.addEventListener('keydown', (e) => {
-        // Updated to trigger on Ctrl + Shift + A or Cmd + Shift + A
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
           e.preventDefault();
           triggerAdminAccessDirect();
@@ -1220,7 +1147,6 @@
 
       const title = document.getElementById('gown-input-title').value.trim();
       const category = document.getElementById('gown-input-category').value;
-      const price = parseFloat(document.getElementById('gown-input-price').value);
       const size = document.getElementById('gown-input-size').value;
       const color = document.getElementById('gown-input-color').value.trim();
       const status = document.getElementById('gown-input-status').value;
@@ -1234,7 +1160,6 @@
         id: 'gown-' + Date.now(),
         title,
         category,
-        price,
         size,
         color,
         status,
@@ -1254,7 +1179,6 @@
 
     function resetGownForm() {
       document.getElementById('gown-input-title').value = '';
-      document.getElementById('gown-input-price').value = '';
       document.getElementById('gown-input-color').value = '';
       document.getElementById('gown-input-desc').value = '';
       document.getElementById('gown-file-browser').value = '';
@@ -1280,7 +1204,6 @@
           </td>
           <td class="p-3.5 text-slate-300">${g.category}</td>
           <td class="p-3.5 text-slate-300">${g.size} / ${g.color}</td>
-          <td class="p-3.5 text-amber-400 font-semibold">₱${Number(g.price).toLocaleString()}</td>
           <td class="p-3.5">
             <span class="px-2 py-0.5 rounded-full ${g.status === 'Available' ? 'bg-emerald-950 border border-emerald-600/40 text-emerald-300' : 'bg-roseGold-950 border border-roseGold-600/40 text-roseGold-300'} text-[10px]">
               ${g.status}
@@ -1343,7 +1266,7 @@
       const log = logs.find(l => l.id === logId);
       if (!log) return;
 
-      const newStatus = prompt('Enter new rental status (e.g. Currently Renting, Returned, Fitting Reserved, Visiting):', log.status);
+      const newStatus = prompt('Enter new rental status (e.g. Currently Renting, Returned, Fitting Reserved, Scheduled):', log.status);
       if (newStatus) {
         log.status = newStatus;
         if (newStatus.toLowerCase().includes('rent')) {
@@ -1361,7 +1284,7 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Customer Name,Phone,Location,Visited Date,Item Rented,Return Date,Status\n";
+      csvContent += "Customer Name,Phone,Location,Fitting Date,Item Requested,Return Date,Status\n";
 
       logs.forEach(l => {
         const row = `"${l.name}","${l.phone}","${l.location}","${l.visitedDate}","${l.itemRented}","${l.returnDate}","${l.status}"`;
