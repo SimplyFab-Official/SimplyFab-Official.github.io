@@ -86,16 +86,17 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #d97706;
     }
-    .zoom-container {
-      overflow: hidden;
+    .pan-view-area {
       cursor: grab;
+      user-select: none;
     }
-    .zoom-container:active {
+    .pan-view-area:active {
       cursor: grabbing;
     }
-    .zoom-image {
-      transition: transform 0.2s ease-out;
+    .pannable-img {
+      transition: transform 0.05s ease-out;
       transform-origin: center center;
+      will-change: transform;
     }
   </style>
 </head>
@@ -239,7 +240,7 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- 1. GOWN DETAILS & INTERACTIVE ZOOM MODAL -->
+  <!-- 1. GOWN DETAILS MODAL -->
   <div id="gown-details-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto custom-scrollbar">
     <div class="glass-panel max-w-3xl w-full my-auto rounded-3xl border border-slate-700 shadow-2xl relative overflow-hidden">
       
@@ -249,30 +250,21 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2">
         
-        <!-- Image Container with Zoom Controls -->
+        <!-- Image Container -->
         <div class="bg-slate-950/90 p-4 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-800 relative">
           
-          <!-- Zoom Action Toolbar -->
-          <div class="absolute top-6 right-6 z-10 flex gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-xl p-1 shadow-lg">
-            <button onclick="adjustZoom(0.25)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Zoom In">
-              <i data-lucide="zoom-in" class="w-4 h-4"></i>
-            </button>
-            <button onclick="adjustZoom(-0.25)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Zoom Out">
-              <i data-lucide="zoom-out" class="w-4 h-4"></i>
-            </button>
-            <button onclick="resetZoom()" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Reset Zoom">
-              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-            </button>
-          </div>
-
-          <div class="relative h-72 sm:h-80 w-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center group zoom-container">
-            <img id="modal-gown-main-img" src="" alt="Gown preview" class="zoom-image w-full h-full object-cover">
+          <div class="relative h-72 sm:h-80 w-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center group cursor-pointer" onclick="openFullscreenLightbox()">
+            <img id="modal-gown-main-img" src="" alt="Gown preview" class="w-full h-full object-cover">
             
+            <div class="absolute inset-0 bg-slate-950/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white text-xs font-semibold gap-2">
+              <i data-lucide="maximize-2" class="w-5 h-5 text-amber-400"></i> Click to Expand & Drag
+            </div>
+
             <!-- Carousel Navigation Arrows -->
-            <button onclick="prevImage()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
+            <button onclick="event.stopPropagation(); prevImage();" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
-            <button onclick="nextImage()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
+            <button onclick="event.stopPropagation(); nextImage();" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
@@ -299,7 +291,7 @@
             </div>
 
             <p class="text-[11px] text-amber-300/80 italic mt-6 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-              ✨ Use the zoom controls above to inspect intricate lace, beadwork, and silhouette details. Rental pricing and fitting adjustments are discussed during your fitting appointment.
+              ✨ Click the photo above to open full screen with drag & pan inspection. Rental pricing and fitting adjustments are discussed during your appointment.
             </p>
           </div>
 
@@ -316,7 +308,53 @@
     </div>
   </div>
 
-  <!-- 2. APPOINTMENT BOOKING MODAL -->
+  <!-- 2. FULLSCREEN INTERACTIVE LIGHTBOX (CLICK & DRAG PAN) -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-xl flex flex-col justify-between hidden overflow-hidden select-none">
+    
+    <!-- Lightbox Header Controls -->
+    <div class="p-4 flex items-center justify-between border-b border-slate-800/80 bg-slate-900/80 z-20">
+      <div class="flex items-center gap-2">
+        <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+        <span id="lightbox-title" class="font-cinzel text-sm font-bold text-white">Full Screen View</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="adjustLightboxZoom(0.3)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 transition" title="Zoom In">
+          <i data-lucide="zoom-in" class="w-4 h-4"></i>
+        </button>
+        <button onclick="adjustLightboxZoom(-0.3)" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 transition" title="Zoom Out">
+          <i data-lucide="zoom-out" class="w-4 h-4"></i>
+        </button>
+        <button onclick="resetLightboxPanZoom()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 transition" title="Reset View">
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+        </button>
+        <button onclick="closeLightboxModal()" class="p-2 rounded-xl bg-roseGold-900/80 hover:bg-roseGold-800 text-roseGold-200 border border-roseGold-600/40 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Lightbox Pan & Zoom Area -->
+    <div id="lightbox-pan-area" class="flex-grow relative overflow-hidden flex items-center justify-center pan-view-area">
+      <img id="lightbox-img" src="" alt="Fullscreen Gown View" class="pannable-img max-w-full max-h-[80vh] object-contain shadow-2xl">
+      
+      <!-- Carousel Arrows in Lightbox -->
+      <button onclick="prevImage(); syncLightboxImage();" class="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-white transition">
+        <i data-lucide="chevron-left" class="w-6 h-6"></i>
+      </button>
+      <button onclick="nextImage(); syncLightboxImage();" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-white transition">
+        <i data-lucide="chevron-right" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <!-- Lightbox Footer Hint -->
+    <div class="p-3 text-center border-t border-slate-800/80 bg-slate-900/80 text-[11px] text-slate-400">
+      <i data-lucide="hand" class="w-3.5 h-3.5 inline mr-1 text-amber-400"></i> Click and drag across the image to pan. Scroll mouse wheel or use buttons to zoom.
+    </div>
+
+  </div>
+
+  <!-- 3. APPOINTMENT BOOKING MODAL -->
   <div id="booking-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden overflow-y-auto custom-scrollbar">
     <div class="glass-panel max-w-md w-full my-auto p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-2xl relative">
       
@@ -375,7 +413,7 @@
     </div>
   </div>
 
-  <!-- 3. HIDDEN ADMIN LOGIN MODAL -->
+  <!-- 4. HIDDEN ADMIN LOGIN MODAL -->
   <div id="admin-login-modal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 hidden">
     <div class="glass-panel max-w-sm w-full p-6 sm:p-8 rounded-3xl border border-amber-500/40 shadow-2xl relative">
       
@@ -404,7 +442,7 @@
     </div>
   </div>
 
-  <!-- 4. FULL ADMIN PORTAL DASHBOARD MODAL -->
+  <!-- 5. FULL ADMIN PORTAL DASHBOARD MODAL -->
   <div id="admin-dashboard-modal" class="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 hidden overflow-y-auto custom-scrollbar">
     <div class="glass-panel max-w-6xl w-full min-h-[85vh] my-auto rounded-3xl border border-slate-700 shadow-2xl flex flex-col overflow-hidden">
       
@@ -608,7 +646,14 @@
     let currentImageIndex = 0;
     let activeUploadedImages = [];
     let audioEnabled = true;
-    let currentZoomScale = 1;
+
+    // Lightbox Pan & Zoom State
+    let lbZoomScale = 1;
+    let lbPanX = 0;
+    let lbPanY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
 
     // Web Audio Synthesizer
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -715,6 +760,7 @@
       loadData();
       renderCatalog();
       setupKeypadShortcuts();
+      setupLightboxPanControls();
       lucide.createIcons();
     });
 
@@ -759,7 +805,7 @@
         card.className = "glass-panel rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-300 group flex flex-col justify-between hover:shadow-2xl hover:shadow-roseGold-950/40";
         card.innerHTML = `
           <div>
-            <div class="relative h-72 w-full overflow-hidden bg-slate-900">
+            <div class="relative h-72 w-full overflow-hidden bg-slate-900 cursor-pointer" onclick="openGownDetailsModal('${gown.id}')">
               <img src="${primaryImg}" alt="${gown.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
               <span class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-slate-700 text-amber-300 text-[10px] uppercase font-semibold">
                 ${gown.category}
@@ -807,7 +853,6 @@
       if (!selectedGown) return;
 
       currentImageIndex = 0;
-      resetZoom();
       updateModalCarousel();
 
       document.getElementById('modal-gown-name').innerText = selectedGown.title;
@@ -820,24 +865,6 @@
       playChime('soft');
     }
 
-    // Image Zooming Engine
-    function adjustZoom(delta) {
-      currentZoomScale = Math.min(Math.max(0.75, currentZoomScale + delta), 3.0);
-      applyZoomTransform();
-    }
-
-    function resetZoom() {
-      currentZoomScale = 1;
-      applyZoomTransform();
-    }
-
-    function applyZoomTransform() {
-      const img = document.getElementById('modal-gown-main-img');
-      if (img) {
-        img.style.transform = `scale(${currentZoomScale})`;
-      }
-    }
-
     function updateModalCarousel() {
       const mainImg = document.getElementById('modal-gown-main-img');
       const thumbsContainer = document.getElementById('modal-gown-thumbnails');
@@ -845,7 +872,6 @@
       const imgs = selectedGown.images && selectedGown.images.length > 0 ? selectedGown.images : ['https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80'];
       
       mainImg.src = imgs[currentImageIndex];
-      resetZoom();
 
       thumbsContainer.innerHTML = '';
       imgs.forEach((img, idx) => {
@@ -873,6 +899,97 @@
 
     function closeGownDetailsModal() {
       document.getElementById('gown-details-modal').classList.add('hidden');
+    }
+
+    // FULLSCREEN LIGHTBOX & CLICK/DRAG PANNING ENGINE
+    function openFullscreenLightbox() {
+      if (!selectedGown) return;
+      document.getElementById('lightbox-title').innerText = selectedGown.title;
+      syncLightboxImage();
+      document.getElementById('lightbox-modal').classList.remove('hidden');
+      resetLightboxPanZoom();
+    }
+
+    function syncLightboxImage() {
+      const imgs = selectedGown.images && selectedGown.images.length > 0 ? selectedGown.images : ['https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80'];
+      document.getElementById('lightbox-img').src = imgs[currentImageIndex];
+      resetLightboxPanZoom();
+    }
+
+    function closeLightboxModal() {
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    function resetLightboxPanZoom() {
+      lbZoomScale = 1;
+      lbPanX = 0;
+      lbPanY = 0;
+      applyLightboxTransform();
+    }
+
+    function adjustLightboxZoom(delta) {
+      lbZoomScale = Math.min(Math.max(1, lbZoomScale + delta), 4.0);
+      if (lbZoomScale === 1) {
+        lbPanX = 0;
+        lbPanY = 0;
+      }
+      applyLightboxTransform();
+    }
+
+    function applyLightboxTransform() {
+      const img = document.getElementById('lightbox-img');
+      if (img) {
+        img.style.transform = `translate(${lbPanX}px, ${lbPanY}px) scale(${lbZoomScale})`;
+      }
+    }
+
+    function setupLightboxPanControls() {
+      const panArea = document.getElementById('lightbox-pan-area');
+
+      // Mouse Dragging
+      panArea.addEventListener('mousedown', (e) => {
+        if (lbZoomScale <= 1) return;
+        isDragging = true;
+        startX = e.clientX - lbPanX;
+        startY = e.clientY - lbPanY;
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        lbPanX = e.clientX - startX;
+        lbPanY = e.clientY - startY;
+        applyLightboxTransform();
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      // Touch Dragging (CP / Mobile)
+      panArea.addEventListener('touchstart', (e) => {
+        if (lbZoomScale <= 1 || e.touches.length !== 1) return;
+        isDragging = true;
+        startX = e.touches[0].clientX - lbPanX;
+        startY = e.touches[0].clientY - lbPanY;
+      });
+
+      panArea.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        lbPanX = e.touches[0].clientX - startX;
+        lbPanY = e.touches[0].clientY - startY;
+        applyLightboxTransform();
+      });
+
+      panArea.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      // Mouse Wheel Zooming
+      panArea.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        adjustLightboxZoom(delta);
+      }, { passive: false });
     }
 
     // Appointment Booking Modal Handlers
