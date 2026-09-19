@@ -1033,7 +1033,7 @@
       closeGownDetailsModal();
     }
 
-    // Secret Admin Triggers (Shortcut: Ctrl+Alt+A / Mobile 5 Taps)
+    // Secret Admin Triggers (Shortcut: Ctrl+Shift+A / Mobile 5 Taps)
     let logoTapCount = 0;
     let logoTapTimer = null;
 
@@ -1050,7 +1050,8 @@
 
     function setupKeypadShortcuts() {
       window.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'a' || e.key === 'A')) {
+        // Updated to trigger on Ctrl + Shift + A or Cmd + Shift + A
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'a' || e.key === 'A')) {
           e.preventDefault();
           triggerAdminAccessDirect();
         }
