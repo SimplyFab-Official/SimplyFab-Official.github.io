@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,6 +86,17 @@
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
       background: #d97706;
     }
+    .zoom-container {
+      overflow: hidden;
+      cursor: grab;
+    }
+    .zoom-container:active {
+      cursor: grabbing;
+    }
+    .zoom-image {
+      transition: transform 0.2s ease-out;
+      transform-origin: center center;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-roseGold-600 selection:text-white custom-scrollbar">
@@ -94,7 +105,7 @@
   <header class="sticky top-0 z-40 glass-nav transition-all duration-300">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
       
-      <!-- Brand Logo (Secret Trigger: 5 rapid taps on mobile/CP) -->
+      <!-- Brand Logo (Secret Gesture Trigger: 5 rapid taps on mobile/CP) -->
       <div id="brand-logo" onclick="handleLogoClick()" class="flex items-center gap-3 cursor-pointer select-none group">
         <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-roseGold-700 via-amber-600 to-amber-300 p-0.5 shadow-lg shadow-roseGold-900/30 group-hover:scale-105 transition-transform">
           <div class="w-full h-full bg-glamDark rounded-full flex items-center justify-center">
@@ -120,7 +131,7 @@
         </button>
 
         <!-- Admin Indicator / Launcher Button -->
-        <button onclick="triggerAdminAccessDirect()" class="relative p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-amber-600/40 text-amber-400 transition" title="Staff Portal Access (Ctrl+Shift+A)">
+        <button onclick="triggerAdminAccessDirect()" class="relative p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 border border-amber-600/40 text-amber-400 transition" title="Staff Portal Access">
           <i data-lucide="shield" class="w-4 h-4"></i>
           <span id="admin-badge-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-roseGold-500 rounded-full animate-ping"></span>
         </button>
@@ -143,7 +154,7 @@
       </h2>
       
       <p class="mt-4 text-slate-300 max-w-2xl mx-auto text-sm sm:text-base font-light leading-relaxed">
-        Browse our exclusive luxury evening gowns, bridal wear, and cocktail dresses. Select your favorite styles and reserve a private 30-minute studio fitting session.
+        Browse our exclusive luxury evening gowns, bridal wear, and cocktail dresses. Select your favorite styles and reserve a 30-minute fitting session with our stylists.
       </p>
 
     </div>
@@ -228,7 +239,7 @@
 
   <!-- ==================== MODALS ==================== -->
 
-  <!-- 1. GOWN DETAILS MODAL -->
+  <!-- 1. GOWN DETAILS & INTERACTIVE ZOOM MODAL -->
   <div id="gown-details-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 hidden overflow-y-auto custom-scrollbar">
     <div class="glass-panel max-w-3xl w-full my-auto rounded-3xl border border-slate-700 shadow-2xl relative overflow-hidden">
       
@@ -238,16 +249,30 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2">
         
-        <!-- Image Carousel Container -->
-        <div class="bg-slate-950/90 p-4 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-800">
-          <div class="relative h-72 sm:h-80 w-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center group">
-            <img id="modal-gown-main-img" src="" alt="Gown preview" class="w-full h-full object-cover">
+        <!-- Image Container with Zoom Controls -->
+        <div class="bg-slate-950/90 p-4 flex flex-col justify-between border-b md:border-b-0 md:border-r border-slate-800 relative">
+          
+          <!-- Zoom Action Toolbar -->
+          <div class="absolute top-6 right-6 z-10 flex gap-1.5 bg-slate-900/90 border border-slate-700/80 rounded-xl p-1 shadow-lg">
+            <button onclick="adjustZoom(0.25)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Zoom In">
+              <i data-lucide="zoom-in" class="w-4 h-4"></i>
+            </button>
+            <button onclick="adjustZoom(-0.25)" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Zoom Out">
+              <i data-lucide="zoom-out" class="w-4 h-4"></i>
+            </button>
+            <button onclick="resetZoom()" class="p-1.5 hover:bg-slate-800 rounded-lg text-slate-300 hover:text-amber-400 transition" title="Reset Zoom">
+              <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="relative h-72 sm:h-80 w-full rounded-2xl overflow-hidden bg-slate-900 flex items-center justify-center group zoom-container">
+            <img id="modal-gown-main-img" src="" alt="Gown preview" class="zoom-image w-full h-full object-cover">
             
             <!-- Carousel Navigation Arrows -->
-            <button onclick="prevImage()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition">
+            <button onclick="prevImage()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
             </button>
-            <button onclick="nextImage()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition">
+            <button onclick="nextImage()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900/70 hover:bg-slate-800 p-2 rounded-full border border-slate-700 text-slate-200 opacity-0 group-hover:opacity-100 transition z-10">
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
           </div>
@@ -268,15 +293,13 @@
 
             <h3 id="modal-gown-name" class="font-cinzel text-xl font-bold text-white">Gown Name</h3>
 
-            <p id="modal-gown-desc" class="text-xs text-slate-300 mt-3 leading-relaxed">Gown description will appear here...</p>
-
             <div class="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-900/80 p-3 rounded-xl border border-slate-800">
               <div><span class="text-slate-400">Size:</span> <strong id="modal-gown-size" class="text-slate-200">S</strong></div>
               <div><span class="text-slate-400">Color:</span> <strong id="modal-gown-color" class="text-slate-200">Rose Gold</strong></div>
             </div>
 
-            <p class="text-[11px] text-amber-300/80 italic mt-4 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
-              ✨ Rental pricing, fitting details, and customization options are discussed directly during your private studio fitting session.
+            <p class="text-[11px] text-amber-300/80 italic mt-6 bg-amber-500/10 p-3 rounded-xl border border-amber-500/20">
+              ✨ Use the zoom controls above to inspect intricate lace, beadwork, and silhouette details. Rental pricing and fitting adjustments are discussed during your fitting appointment.
             </p>
           </div>
 
@@ -414,7 +437,7 @@
           <span id="badge-conflict-count" class="hidden px-2 py-0.5 rounded-full bg-roseGold-600 text-white text-[10px]">0 Conflicts</span>
         </button>
         <button onclick="switchAdminTab('inventory')" id="tab-inventory" class="py-3 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
-          <i data-lucide="package" class="w-4 h-4"></i> Gown Inventory & Gemini AI
+          <i data-lucide="package" class="w-4 h-4"></i> Gown Inventory
         </button>
         <button onclick="switchAdminTab('logs')" id="tab-logs" class="py-3 px-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 transition">
           <i data-lucide="users" class="w-4 h-4"></i> Customer Activity Logs
@@ -453,19 +476,14 @@
           </div>
         </div>
 
-        <!-- TAB 2: INVENTORY MANAGEMENT & GEMINI AI AUTO-DESCRIPTION GENERATOR -->
+        <!-- TAB 2: INVENTORY MANAGEMENT & MULTI-IMAGE UPLOADER -->
         <div id="admin-view-inventory" class="hidden space-y-6">
           
           <!-- Add / Edit Form -->
           <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-              <h4 class="font-cinzel text-sm font-bold text-amber-300 flex items-center gap-2">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> Add New Gown Listing
-              </h4>
-              <span class="text-[11px] text-amber-400/90 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 flex items-center gap-1.5">
-                <i data-lucide="wand2" class="w-3.5 h-3.5"></i> Powered by Gemini 3 Flash Multimodal Vision
-              </span>
-            </div>
+            <h4 class="font-cinzel text-sm font-bold text-amber-300 flex items-center gap-2">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i> Add New Gown Listing
+            </h4>
 
             <form onsubmit="handleSaveGown(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
               <div>
@@ -518,18 +536,6 @@
                 <div id="gown-images-preview" class="flex gap-2 mt-3 overflow-x-auto pb-1">
                   <!-- Uploaded image thumbnails render here -->
                 </div>
-              </div>
-
-              <!-- AI Auto Generator Trigger Area -->
-              <div class="sm:col-span-2 lg:col-span-3">
-                <div class="flex items-center justify-between mb-1">
-                  <label class="block text-slate-400">Gown Description & Styling Notes</label>
-                  <button type="button" onclick="generateAIDescriptionFromImage()" id="btn-ai-generate" class="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 via-roseGold-600 to-amber-500 hover:from-amber-500 hover:to-roseGold-500 text-white font-semibold text-xs shadow-md flex items-center gap-1.5 transition disabled:opacity-50">
-                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
-                    <span id="ai-btn-text">Auto-Generate Description (AI Vision)</span>
-                  </button>
-                </div>
-                <textarea id="gown-input-desc" rows="3" placeholder="Upload a photo above and click 'Auto-Generate Description (AI Vision)' to automatically inspect the gown's fabric, silhouette, and details without typing..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"></textarea>
               </div>
 
               <div class="sm:col-span-2 lg:col-span-3 flex justify-end gap-2">
@@ -602,6 +608,7 @@
     let currentImageIndex = 0;
     let activeUploadedImages = [];
     let audioEnabled = true;
+    let currentZoomScale = 1;
 
     // Web Audio Synthesizer
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -661,7 +668,6 @@
         size: 'M',
         color: 'Rose Gold',
         status: 'Available',
-        desc: 'Floor-length sweeping ballgown featuring thousands of light-reflecting rose gold sequins, a structured sweetheart bodice, and a fluid A-line skirt with an elegant chapel train.',
         images: [
           'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80',
           'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=800&q=80'
@@ -674,7 +680,6 @@
         size: 'S',
         color: 'Navy Blue',
         status: 'Available',
-        desc: 'Deep navy silk satin column gown featuring a dramatic off-the-shoulder neckline, draped portrait sleeve accent, and a subtle thigh-high slit designed for gala entrances.',
         images: [
           'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80',
           'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80'
@@ -687,7 +692,6 @@
         size: 'XS',
         color: 'Ivory Cream',
         status: 'Available',
-        desc: 'Handcrafted French Chantilly lace gown featuring delicate freshwater pearl embellishments, sheer illusion neckline, and a voluminous multi-layered tulle train.',
         images: [
           'https://images.unsplash.com/photo-1594552072238-b8a33785b261?auto=format&fit=crop&w=800&q=80',
           'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80'
@@ -700,7 +704,6 @@
         size: 'L',
         color: 'Gold / Champagne',
         status: 'Available',
-        desc: 'Modern Filipiniana couture gown with signature stiffened butterfly sleeves, hand-loomed piña fabric embroidery, and an elongated satin skirt.',
         images: [
           'https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&w=800&q=80'
         ]
@@ -722,101 +725,6 @@
 
       if (!localStorage.getItem(STORAGE_KEY_GOWNS)) {
         localStorage.setItem(STORAGE_KEY_GOWNS, JSON.stringify(defaultGowns));
-      }
-    }
-
-    // GEMINI AI AUTO DESCRIPTION GENERATION INTEGRATION
-    async function generateAIDescriptionFromImage() {
-      const btn = document.getElementById('btn-ai-generate');
-      const btnText = document.getElementById('ai-btn-text');
-      const descTextarea = document.getElementById('gown-input-desc');
-      const category = document.getElementById('gown-input-category').value;
-      const color = document.getElementById('gown-input-color').value;
-
-      if (!activeUploadedImages || activeUploadedImages.length === 0) {
-        alert("Please browse and upload at least one gown photo first so Gemini AI can inspect the gown image.");
-        return;
-      }
-
-      const primaryBase64Image = activeUploadedImages[0];
-      const mimeTypeMatch = primaryBase64Image.match(/^data:(image\/[a-zA-Z]+);base64,/);
-      const mimeType = mimeTypeMatch ? mimeTypeMatch[1] : 'image/jpeg';
-      const cleanBase64Data = primaryBase64Image.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
-
-      btn.disabled = true;
-      btnText.innerText = "Analyzing Gown Pixels with Gemini AI...";
-
-      const promptText = `Act as a world-class luxury fashion stylist and couture designer for "Simply Fab 2.0 Gown Rental Studio". 
-Analyze this uploaded gown image in extreme detail. 
-Write a precise, elegant, high-end 2 to 3 sentence fashion description detailing:
-1. Silhouette (e.g., A-line, Ballgown, Column, Mermaid, Empire) & Neckline.
-2. Fabric texture & visual accents (e.g., silk satin, sequins, Chantilly lace, tulle, beadwork, slit, train).
-3. Ideal formal occasion or styling note.
-Category hint: ${category}. Color hint: ${color}.
-Keep the response fluid, sophisticated, and polished without bullet points or headers.`;
-
-      const apiKey = ""; // Built-in runtime API Key proxy
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-      const payload = {
-        contents: [
-          {
-            role: "user",
-            parts: [
-              { text: promptText },
-              {
-                inlineData: {
-                  mimeType: mimeType,
-                  data: cleanBase64Data
-                }
-              }
-            ]
-          }
-        ],
-        systemInstruction: {
-          parts: [{ text: "You are an expert luxury couture stylist. Provide concise, elegant, evocative descriptions for luxury rental gowns based strictly on visual inspection of uploaded photos." }]
-        }
-      };
-
-      try {
-        let retries = 3;
-        let delay = 1000;
-        let response = null;
-
-        while (retries > 0) {
-          try {
-            response = await fetch(apiUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-            if (response.ok) break;
-          } catch (e) {
-            // retry silently
-          }
-          retries--;
-          await new Promise(res => setTimeout(res, delay));
-          delay *= 2;
-        }
-
-        if (response && response.ok) {
-          const result = await response.json();
-          const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-          
-          if (generatedText) {
-            descTextarea.value = generatedText.trim();
-            playChime('vip');
-          } else {
-            alert("Gemini AI was unable to parse the gown image. Please try another image.");
-          }
-        } else {
-          alert("Error connecting to Gemini AI Vision service. Please check your connection.");
-        }
-      } catch (err) {
-        alert("An error occurred while generating the description.");
-      } finally {
-        btn.disabled = false;
-        btnText.innerText = "Auto-Generate Description (AI Vision)";
       }
     }
 
@@ -867,8 +775,6 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
               <div class="flex items-center justify-between gap-2 mt-2 text-xs">
                 <span class="text-slate-400">Size: <strong class="text-slate-200">${gown.size}</strong> • ${gown.color}</span>
               </div>
-
-              <p class="text-xs text-slate-400 mt-2 line-clamp-2">${gown.desc}</p>
             </div>
           </div>
 
@@ -901,17 +807,35 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
       if (!selectedGown) return;
 
       currentImageIndex = 0;
+      resetZoom();
       updateModalCarousel();
 
       document.getElementById('modal-gown-name').innerText = selectedGown.title;
       document.getElementById('modal-gown-category').innerText = selectedGown.category;
       document.getElementById('modal-gown-status').innerText = selectedGown.status;
-      document.getElementById('modal-gown-desc').innerText = selectedGown.desc;
       document.getElementById('modal-gown-size').innerText = selectedGown.size;
       document.getElementById('modal-gown-color').innerText = selectedGown.color;
 
       document.getElementById('gown-details-modal').classList.remove('hidden');
       playChime('soft');
+    }
+
+    // Image Zooming Engine
+    function adjustZoom(delta) {
+      currentZoomScale = Math.min(Math.max(0.75, currentZoomScale + delta), 3.0);
+      applyZoomTransform();
+    }
+
+    function resetZoom() {
+      currentZoomScale = 1;
+      applyZoomTransform();
+    }
+
+    function applyZoomTransform() {
+      const img = document.getElementById('modal-gown-main-img');
+      if (img) {
+        img.style.transform = `scale(${currentZoomScale})`;
+      }
     }
 
     function updateModalCarousel() {
@@ -921,6 +845,7 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
       const imgs = selectedGown.images && selectedGown.images.length > 0 ? selectedGown.images : ['https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80'];
       
       mainImg.src = imgs[currentImageIndex];
+      resetZoom();
 
       thumbsContainer.innerHTML = '';
       imgs.forEach((img, idx) => {
@@ -1257,7 +1182,6 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
       const size = document.getElementById('gown-input-size').value;
       const color = document.getElementById('gown-input-color').value.trim();
       const status = document.getElementById('gown-input-status').value;
-      const desc = document.getElementById('gown-input-desc').value.trim();
 
       const finalImages = activeUploadedImages.length > 0 
         ? activeUploadedImages 
@@ -1270,7 +1194,6 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
         size,
         color,
         status,
-        desc: desc || "High-end designer gown available for private studio fitting.",
         images: finalImages
       };
 
@@ -1287,7 +1210,6 @@ Keep the response fluid, sophisticated, and polished without bullet points or he
     function resetGownForm() {
       document.getElementById('gown-input-title').value = '';
       document.getElementById('gown-input-color').value = '';
-      document.getElementById('gown-input-desc').value = '';
       document.getElementById('gown-file-browser').value = '';
       document.getElementById('gown-images-preview').innerHTML = '';
       activeUploadedImages = [];
