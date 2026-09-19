@@ -192,7 +192,7 @@
             <option value="M">M</option>
             <option value="L">L</option>
             <option value="XL">XL</option>
-            <option value="Custom">Custom Fit</option>
+            <option value="Custom Fit">Custom Fit</option>
           </select>
 
           <button onclick="resetFilters()" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-3 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
@@ -285,8 +285,11 @@
 
             <h3 id="modal-gown-name" class="font-cinzel text-xl font-bold text-white">Gown Name</h3>
 
-            <div class="grid grid-cols-2 gap-2 mt-4 text-xs bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-              <div><span class="text-slate-400">Size:</span> <strong id="modal-gown-size" class="text-slate-200">S</strong></div>
+            <div class="space-y-2 mt-4 text-xs bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400">Available Sizes:</span>
+                <div id="modal-gown-sizes" class="flex flex-wrap gap-1"></div>
+              </div>
               <div><span class="text-slate-400">Color:</span> <strong id="modal-gown-color" class="text-slate-200">Rose Gold</strong></div>
             </div>
 
@@ -540,16 +543,29 @@
                 </select>
               </div>
 
-              <div>
-                <label class="block text-slate-400 mb-1">Size *</label>
-                <select id="gown-input-size" required class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500">
-                  <option value="XS">XS</option>
-                  <option value="S">S</option>
-                  <option value="M">M</option>
-                  <option value="L">L</option>
-                  <option value="XL">XL</option>
-                  <option value="Custom">Custom Fit</option>
-                </select>
+              <!-- Multi-Size Selection Area -->
+              <div class="sm:col-span-2 lg:col-span-1">
+                <label class="block text-slate-400 mb-1">Available Sizes (Select All That Apply) *</label>
+                <div class="flex flex-wrap gap-2 bg-slate-900 p-2 rounded-xl border border-slate-700">
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="XS" class="accent-amber-500 rounded"> XS
+                  </label>
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="S" class="accent-amber-500 rounded"> S
+                  </label>
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="M" class="accent-amber-500 rounded"> M
+                  </label>
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="L" class="accent-amber-500 rounded"> L
+                  </label>
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="XL" class="accent-amber-500 rounded"> XL
+                  </label>
+                  <label class="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-200 text-xs">
+                    <input type="checkbox" name="gown-size-option" value="Custom Fit" class="accent-amber-500 rounded"> Custom Fit
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -590,7 +606,7 @@
                 <tr>
                   <th class="p-3.5">Gown</th>
                   <th class="p-3.5">Category</th>
-                  <th class="p-3.5">Size/Color</th>
+                  <th class="p-3.5">Sizes / Color</th>
                   <th class="p-3.5">Status</th>
                   <th class="p-3.5 text-right">Actions</th>
                 </tr>
@@ -710,7 +726,7 @@
         id: 'g-101',
         title: 'Aurora Rose Gold Sequined Gown',
         category: 'Ballgown',
-        size: 'M',
+        sizes: ['S', 'M', 'L'],
         color: 'Rose Gold',
         status: 'Available',
         images: [
@@ -722,7 +738,7 @@
         id: 'g-102',
         title: 'Celestial Midnight Sapphire Gown',
         category: 'Evening Wear',
-        size: 'S',
+        sizes: ['XS', 'S'],
         color: 'Navy Blue',
         status: 'Available',
         images: [
@@ -734,7 +750,7 @@
         id: 'g-103',
         title: 'Elysian Lace Bridal Couture',
         category: 'Bridal',
-        size: 'XS',
+        sizes: ['XS', 'S', 'M'],
         color: 'Ivory Cream',
         status: 'Available',
         images: [
@@ -746,7 +762,7 @@
         id: 'g-104',
         title: 'Modern Mestiza Butterfly Filipiniana',
         category: 'Filipiniana',
-        size: 'L',
+        sizes: ['M', 'L', 'XL', 'Custom Fit'],
         color: 'Gold / Champagne',
         status: 'Available',
         images: [
@@ -765,13 +781,22 @@
     });
 
     function loadData() {
-      gowns = JSON.parse(localStorage.getItem(STORAGE_KEY_GOWNS)) || defaultGowns;
-      fittings = JSON.parse(localStorage.getItem(STORAGE_KEY_FITTINGS)) || [];
-      logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
-
-      if (!localStorage.getItem(STORAGE_KEY_GOWNS)) {
+      const stored = localStorage.getItem(STORAGE_KEY_GOWNS);
+      if (stored) {
+        gowns = JSON.parse(stored);
+        // Migration patch for old single size format if present
+        gowns.forEach(g => {
+          if (g.size && !g.sizes) {
+            g.sizes = [g.size];
+          }
+        });
+      } else {
+        gowns = defaultGowns;
         localStorage.setItem(STORAGE_KEY_GOWNS, JSON.stringify(defaultGowns));
       }
+
+      fittings = JSON.parse(localStorage.getItem(STORAGE_KEY_FITTINGS)) || [];
+      logs = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS)) || [];
     }
 
     // Catalog Rendering & Filtering
@@ -787,7 +812,10 @@
       const filtered = gowns.filter(g => {
         const matchesSearch = g.title.toLowerCase().includes(searchTerm) || g.color.toLowerCase().includes(searchTerm) || g.category.toLowerCase().includes(searchTerm);
         const matchesCat = catFilter === 'ALL' || g.category === catFilter;
-        const matchesSize = sizeFilter === 'ALL' || g.size === sizeFilter;
+        
+        const gownSizes = g.sizes || (g.size ? [g.size] : []);
+        const matchesSize = sizeFilter === 'ALL' || gownSizes.includes(sizeFilter);
+
         return matchesSearch && matchesCat && matchesSize;
       });
 
@@ -800,9 +828,13 @@
 
       filtered.forEach(gown => {
         const primaryImg = gown.images && gown.images.length > 0 ? gown.images[0] : 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?auto=format&fit=crop&w=800&q=80';
-        
+        const gownSizes = gown.sizes || (gown.size ? [gown.size] : ['Custom Fit']);
+
         const card = document.createElement('div');
         card.className = "glass-panel rounded-2xl overflow-hidden hover:border-amber-500/50 transition-all duration-300 group flex flex-col justify-between hover:shadow-2xl hover:shadow-roseGold-950/40";
+        
+        const sizeBadgesHtml = gownSizes.map(s => `<span class="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700 text-[10px] text-amber-300 font-medium">${s}</span>`).join(' ');
+
         card.innerHTML = `
           <div>
             <div class="relative h-72 w-full overflow-hidden bg-slate-900 cursor-pointer" onclick="openGownDetailsModal('${gown.id}')">
@@ -818,8 +850,9 @@
             <div class="p-5">
               <h3 class="font-cinzel text-base font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">${gown.title}</h3>
               
-              <div class="flex items-center justify-between gap-2 mt-2 text-xs">
-                <span class="text-slate-400">Size: <strong class="text-slate-200">${gown.size}</strong> • ${gown.color}</span>
+              <div class="flex items-center justify-between gap-2 mt-3 text-xs">
+                <div class="flex flex-wrap gap-1">${sizeBadgesHtml}</div>
+                <span class="text-slate-400 shrink-0">${gown.color}</span>
               </div>
             </div>
           </div>
@@ -858,8 +891,11 @@
       document.getElementById('modal-gown-name').innerText = selectedGown.title;
       document.getElementById('modal-gown-category').innerText = selectedGown.category;
       document.getElementById('modal-gown-status').innerText = selectedGown.status;
-      document.getElementById('modal-gown-size').innerText = selectedGown.size;
       document.getElementById('modal-gown-color').innerText = selectedGown.color;
+
+      const gownSizes = selectedGown.sizes || (selectedGown.size ? [selectedGown.size] : ['Custom Fit']);
+      const sizesContainer = document.getElementById('modal-gown-sizes');
+      sizesContainer.innerHTML = gownSizes.map(s => `<span class="px-2 py-0.5 rounded bg-slate-800 border border-slate-700 text-amber-300 font-semibold">${s}</span>`).join(' ');
 
       document.getElementById('gown-details-modal').classList.remove('hidden');
       playChime('soft');
@@ -1296,9 +1332,17 @@
 
       const title = document.getElementById('gown-input-title').value.trim();
       const category = document.getElementById('gown-input-category').value;
-      const size = document.getElementById('gown-input-size').value;
       const color = document.getElementById('gown-input-color').value.trim();
       const status = document.getElementById('gown-input-status').value;
+
+      // Extract Multi-Selected Sizes
+      const sizeCheckboxes = document.querySelectorAll('input[name="gown-size-option"]:checked');
+      const selectedSizes = Array.from(sizeCheckboxes).map(cb => cb.value);
+
+      if (selectedSizes.length === 0) {
+        alert('Please select at least one available size (e.g. S, M, L).');
+        return;
+      }
 
       const finalImages = activeUploadedImages.length > 0 
         ? activeUploadedImages 
@@ -1308,7 +1352,7 @@
         id: 'gown-' + Date.now(),
         title,
         category,
-        size,
+        sizes: selectedSizes,
         color,
         status,
         images: finalImages
@@ -1329,6 +1373,10 @@
       document.getElementById('gown-input-color').value = '';
       document.getElementById('gown-file-browser').value = '';
       document.getElementById('gown-images-preview').innerHTML = '';
+      
+      const sizeCheckboxes = document.querySelectorAll('input[name="gown-size-option"]');
+      sizeCheckboxes.forEach(cb => cb.checked = false);
+
       activeUploadedImages = [];
     }
 
@@ -1338,6 +1386,9 @@
 
       gowns.forEach(g => {
         const primaryImg = g.images && g.images.length > 0 ? g.images[0] : '';
+        const gownSizes = g.sizes || (g.size ? [g.size] : ['Custom Fit']);
+        const sizeTags = gownSizes.map(s => `<span class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-[10px] text-amber-300 font-semibold">${s}</span>`).join(' ');
+
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-800/40';
         tr.innerHTML = `
@@ -1349,7 +1400,10 @@
             </div>
           </td>
           <td class="p-3.5 text-slate-300">${g.category}</td>
-          <td class="p-3.5 text-slate-300">${g.size} / ${g.color}</td>
+          <td class="p-3.5 text-slate-300">
+            <div class="flex flex-wrap gap-1 mb-1">${sizeTags}</div>
+            <span class="text-[11px] text-slate-400">${g.color}</span>
+          </td>
           <td class="p-3.5">
             <span class="px-2 py-0.5 rounded-full ${g.status === 'Available' ? 'bg-emerald-950 border border-emerald-600/40 text-emerald-300' : 'bg-roseGold-950 border border-roseGold-600/40 text-roseGold-300'} text-[10px]">
               ${g.status}
